@@ -2,6 +2,7 @@ package me.storm.ninegag.view;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.AbsListView;
 
 import com.etsy.android.grid.StaggeredGridView;
@@ -10,7 +11,7 @@ import com.etsy.android.grid.StaggeredGridView;
  * Created by storm on 14-5-6.
  */
 public class PageStaggeredGridView extends StaggeredGridView implements AbsListView.OnScrollListener {
-    private LoadingFooter mLoadingFooter;
+    private LoadingFooter mLoadingFooter;//底部的加载loading
 
     private OnLoadNextListener mLoadNextListener;
 
@@ -31,6 +32,7 @@ public class PageStaggeredGridView extends StaggeredGridView implements AbsListV
 
     private void init() {
         mLoadingFooter = new LoadingFooter(getContext());
+        //加入底部的footer
         addFooterView(mLoadingFooter.getView());
         setOnScrollListener(this);
     }
@@ -46,17 +48,22 @@ public class PageStaggeredGridView extends StaggeredGridView implements AbsListV
 
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        if (mLoadingFooter.getState() == LoadingFooter.State.Loading
-                || mLoadingFooter.getState() == LoadingFooter.State.TheEnd) {
-            return;
+        try {
+            if (mLoadingFooter.getState() == LoadingFooter.State.Loading
+                    || mLoadingFooter.getState() == LoadingFooter.State.TheEnd) {
+                return;
+            }
+            if (firstVisibleItem + visibleItemCount >= totalItemCount
+                    && totalItemCount != 0
+                    && totalItemCount != getHeaderViewsCount()
+                    + getFooterViewsCount() && mLoadNextListener != null) {
+                mLoadingFooter.setState(LoadingFooter.State.Loading);
+                mLoadNextListener.onLoadNext();
+            }
+        } catch (Exception e) {
+            Log.e("majun", e.toString(), e);
         }
-        if (firstVisibleItem + visibleItemCount >= totalItemCount
-                && totalItemCount != 0
-                && totalItemCount != getHeaderViewsCount()
-                + getFooterViewsCount() && mLoadNextListener != null) {
-            mLoadingFooter.setState(LoadingFooter.State.Loading);
-            mLoadNextListener.onLoadNext();
-        }
+
     }
 
     public void setState(LoadingFooter.State status) {

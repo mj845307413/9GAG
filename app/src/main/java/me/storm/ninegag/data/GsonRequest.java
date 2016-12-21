@@ -1,5 +1,7 @@
 package me.storm.ninegag.data;
 
+import android.util.Log;
+
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
@@ -48,7 +50,9 @@ public class GsonRequest<T> extends Request<T> {
     @Override
     protected Response<T> parseNetworkResponse(NetworkResponse response) {
         try {
-            String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+//            String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+            String json = new String(response.data, "utf-8");//当获取的response的头部中没有指明具体的编码时,默认的编码是ISO-8859-1
+            Log.i("majun", json);
             return Response.success(mGson.fromJson(json, mClazz),
                     HttpHeaderParser.parseCacheHeaders(response));
         } catch (UnsupportedEncodingException e) {

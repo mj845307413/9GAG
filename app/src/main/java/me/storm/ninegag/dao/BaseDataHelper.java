@@ -8,6 +8,7 @@ import android.support.v4.content.CursorLoader;
 
 /**
  * Created by storm on 14-3-28.
+ * 数据库处理类
  */
 public abstract class BaseDataHelper {
     private Context mContext;

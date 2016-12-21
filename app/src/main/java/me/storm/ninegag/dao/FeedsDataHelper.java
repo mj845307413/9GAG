@@ -18,6 +18,7 @@ import android.support.v4.content.CursorLoader;
 
 /**
  * Created by storm on 14-4-8.
+ * 相关的数据库操作
  */
 public class FeedsDataHelper extends BaseDataHelper {
     private Category mCategory;
@@ -27,6 +28,7 @@ public class FeedsDataHelper extends BaseDataHelper {
         mCategory = category;
     }
 
+    //返回contentprovider的地址
     @Override
     protected Uri getContentUri() {
         return DataProvider.FEEDS_CONTENT_URI;

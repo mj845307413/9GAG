@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import me.storm.ninegag.ui.BaseActivity;
-
+//用于滑动返回上一个页面
 public class SwipeBackActivity extends BaseActivity implements SwipeBackActivityBase {
     private SwipeBackActivityHelper mHelper;
 

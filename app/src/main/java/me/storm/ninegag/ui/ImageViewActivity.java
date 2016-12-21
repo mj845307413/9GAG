@@ -19,6 +19,7 @@ import uk.co.senab.photoview.PhotoViewAttacher;
 
 /**
  * Created by storm on 14-4-15.
+ * 单机点开查看图片的界面
  */
 public class ImageViewActivity extends SwipeBackActivity {
     public static final String IMAGE_URL = "image_url";

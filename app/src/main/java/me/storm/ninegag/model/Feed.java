@@ -5,6 +5,7 @@ import android.media.Image;
 
 import com.google.gson.Gson;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -13,30 +14,18 @@ import me.storm.ninegag.dao.FeedsDataHelper;
 /**
  * Created by storm on 14-3-25.
  */
-public class Feed extends BaseModel {
-    private static final HashMap<String, Feed> CACHE = new HashMap<String, Feed>();
+public class Feed extends BaseModel implements Serializable {
+    private static final HashMap<Long, Feed> CACHE = new HashMap<>();
 
-    public String id;
-    public String caption;
-    public String link;
-    public Image images;
-    public Vote votes;
-
-    public class Image {
-        public String small;
-        public String normal;
-        public String large;
-    }
-
-    private class Vote {
-        public int count;
-    }
+    public long id;
+    public String image_url;
+    public String abs;
 
     private static void addToCache(Feed feed) {
         CACHE.put(feed.id, feed);
     }
 
-    private static Feed getFromCache(String id) {
+    private static Feed getFromCache(long id) {
         return CACHE.get(id);
     }
 
@@ -45,7 +34,7 @@ public class Feed extends BaseModel {
     }
 
     public static Feed fromCursor(Cursor cursor) {
-        String id = cursor.getString(cursor.getColumnIndex(FeedsDataHelper.FeedsDBInfo.ID));
+        long id = cursor.getLong(cursor.getColumnIndex(FeedsDataHelper.FeedsDBInfo.ID));
         Feed feed = getFromCache(id);
         if (feed != null) {
             return feed;
@@ -57,16 +46,13 @@ public class Feed extends BaseModel {
         return feed;
     }
 
-    public static class FeedRequestData {
+    public class FeedRequestData implements Serializable {
         public ArrayList<Feed> data;
-        public Paging paging;
+        public int start_index;
 
-        public String getPage() {
-            return paging.next;
+        public int getPage() {
+            return start_index;
         }
     }
 
-    private class Paging {
-        public String next;
-    }
 }

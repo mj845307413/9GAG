@@ -11,6 +11,7 @@ import me.storm.ninegag.view.titanic.TitanicTextView;
 
 /**
  * Created by storm on 14-4-12.
+ * 用于加载新数据时在数据结尾显示的loading图
  */
 public class LoadingFooter {
     protected View mLoadingFooter;

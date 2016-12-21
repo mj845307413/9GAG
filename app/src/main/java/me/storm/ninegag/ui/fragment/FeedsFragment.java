@@ -6,7 +6,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,7 +22,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.nhaarman.listviewanimations.swinginadapters.AnimationAdapter;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -57,8 +65,9 @@ public class FeedsFragment extends BaseFragment implements LoaderManager.LoaderC
     private Category mCategory;
     private FeedsDataHelper mDataHelper;
     private FeedsAdapter mAdapter;
-    private String mPage = "0";
+    private long mPage = 0;
 
+    //返回feedfragment的实例
     public static FeedsFragment newInstance(Category category) {
         FeedsFragment fragment = new FeedsFragment();
         Bundle bundle = new Bundle();
@@ -86,6 +95,7 @@ public class FeedsFragment extends BaseFragment implements LoaderManager.LoaderC
         AnimationAdapter animationAdapter = new CardsAnimationAdapter(mAdapter);
         animationAdapter.setAbsListView(gridView);
         gridView.setAdapter(animationAdapter);
+        //将loadNextListener传递给pageStaggeredGridView
         gridView.setLoadNextListener(new OnLoadNextListener() {
             @Override
             public void onLoadNext() {
@@ -96,7 +106,7 @@ public class FeedsFragment extends BaseFragment implements LoaderManager.LoaderC
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String imageUrl = mAdapter.getItem(position - gridView.getHeaderViewsCount()).images.large;
+                String imageUrl = mAdapter.getItem(position - gridView.getHeaderViewsCount()).image_url;
                 Intent intent = new Intent(getActivity(), ImageViewActivity.class);
                 intent.putExtra(ImageViewActivity.IMAGE_URL, imageUrl);
                 startActivity(intent);
@@ -104,8 +114,9 @@ public class FeedsFragment extends BaseFragment implements LoaderManager.LoaderC
         });
 
         initActionBar();
+        //重新加载数据
         mSwipeLayout.setOnRefreshListener(this);
-        mSwipeLayout.setColorScheme(android.R.color.holo_blue_bright,
+        mSwipeLayout.setColorSchemeColors(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
@@ -126,20 +137,30 @@ public class FeedsFragment extends BaseFragment implements LoaderManager.LoaderC
         });
     }
 
+    //根据数据库保存的category类型,设定mCategory
     private void parseArgument() {
         Bundle bundle = getArguments();
         mCategory = Category.valueOf(bundle.getString(EXTRA_CATEGORY));
     }
 
-    private void loadData(String next) {
-        if (!mSwipeLayout.isRefreshing() && ("0".equals(next))) {
+    private void loadData(long next) {
+        if (!mSwipeLayout.isRefreshing() && (next == 0)) {
             setRefreshing(true);
         }
-        executeRequest(new GsonRequest(String.format(GagApi.LIST, mCategory.name(), next), Feed.FeedRequestData.class, responseListener(), errorListener()));
+        String name = null;
+        String url = null;
+        try {
+            name = URLEncoder.encode(mCategory.getDisplayName(), "utf-8");
+            url = String.format(Locale.getDefault(), GagApi.LIST, next) + "%E5%85%A8%E9%83%A8&tag1=" + name;
+        } catch (Exception e) {
+            Log.e("majun", e.toString());
+        }
+        Log.i("majun", "url:" + url);
+        executeRequest(new GsonRequest(url, Feed.FeedRequestData.class, responseListener(), errorListener()));
     }
 
     private Response.Listener<Feed.FeedRequestData> responseListener() {
-        final boolean isRefreshFromTop = ("0".equals(mPage));
+        final boolean isRefreshFromTop = (mPage == 0);
         return new Response.Listener<Feed.FeedRequestData>() {
             @Override
             public void onResponse(final Feed.FeedRequestData response) {
@@ -149,8 +170,13 @@ public class FeedsFragment extends BaseFragment implements LoaderManager.LoaderC
                         if (isRefreshFromTop) {
                             mDataHelper.deleteAll();
                         }
-                        mPage = response.getPage();
-                        ArrayList<Feed> feeds = response.data;
+                        mPage = response.getPage() + 1;
+                        List<Feed> feeds = new ArrayList<>();
+                        for (Feed feed : response.data) {
+                            if (!TextUtils.isEmpty(feed.image_url)) {
+                                feeds.add(feed);
+                            }
+                        }
                         mDataHelper.bulkInsert(feeds);
                         return null;
                     }
@@ -173,6 +199,7 @@ public class FeedsFragment extends BaseFragment implements LoaderManager.LoaderC
         return new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                Log.e("request", error.toString());
                 ToastUtils.showShort(R.string.loading_failed);
                 setRefreshing(false);
                 gridView.setState(LoadingFooter.State.Idle, 3000);
@@ -181,7 +208,7 @@ public class FeedsFragment extends BaseFragment implements LoaderManager.LoaderC
     }
 
     private void loadFirst() {
-        mPage = "0";
+        mPage = 0;
         loadData(mPage);
     }
 
@@ -212,6 +239,7 @@ public class FeedsFragment extends BaseFragment implements LoaderManager.LoaderC
         mAdapter.changeCursor(null);
     }
 
+    //SwipeRefreshLayout.OnRefreshListener的接口
     @Override
     public void onRefresh() {
         loadFirst();
