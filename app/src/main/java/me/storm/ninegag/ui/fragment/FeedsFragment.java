@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
@@ -16,6 +17,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LinearInterpolator;
 import android.widget.AdapterView;
 
 import com.android.volley.Response;
@@ -41,6 +46,7 @@ import me.storm.ninegag.model.Feed;
 import me.storm.ninegag.ui.ImageViewActivity;
 import me.storm.ninegag.ui.adapter.CardsAnimationAdapter;
 import me.storm.ninegag.ui.adapter.FeedsAdapter;
+import me.storm.ninegag.ui.provider.MyRefreshProvider;
 import me.storm.ninegag.util.ActionBarUtils;
 import me.storm.ninegag.util.TaskUtils;
 import me.storm.ninegag.util.ToastUtils;
@@ -65,6 +71,8 @@ public class FeedsFragment extends BaseFragment implements LoaderManager.LoaderC
     private Category mCategory;
     private FeedsDataHelper mDataHelper;
     private FeedsAdapter mAdapter;
+    private MyRefreshProvider mMyRefreshProvider;
+    private Animation mAnimation;
     private long mPage = 0;
 
     //返回feedfragment的实例
@@ -127,6 +135,8 @@ public class FeedsFragment extends BaseFragment implements LoaderManager.LoaderC
     }
 
     private void initActionBar() {
+        mAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.refresh_rotate);
+        mAnimation.setInterpolator(new LinearInterpolator());
         View actionBarContainer = ActionBarUtils.findActionBarContainer(getActivity());
         actionBarContainer.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -248,16 +258,24 @@ public class FeedsFragment extends BaseFragment implements LoaderManager.LoaderC
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         mRefreshItem = menu.findItem(R.id.action_refresh);
+        mMyRefreshProvider = new MyRefreshProvider(getActivity(), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadFirstAndScrollToTop();
+            }
+        });
+        mRefreshItem.setActionProvider(mMyRefreshProvider);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
     private void setRefreshing(boolean refreshing) {
+
         mSwipeLayout.setRefreshing(refreshing);
         if (mRefreshItem == null) return;
 
-        if (refreshing)
-            mRefreshItem.setActionView(R.layout.actionbar_refresh_progress);
-        else
-            mRefreshItem.setActionView(null);
+        if (refreshing) {
+            mMyRefreshProvider.freshIcon.startAnimation(mAnimation);
+        } else
+            mMyRefreshProvider.freshIcon.clearAnimation();
     }
 }

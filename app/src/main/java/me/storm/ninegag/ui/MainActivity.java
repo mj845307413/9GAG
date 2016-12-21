@@ -103,13 +103,7 @@ public class MainActivity extends BaseActivity {
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
-        switch (item.getItemId()) {
-            case R.id.action_refresh:
-                mContentFragment.loadFirstAndScrollToTop();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+        return super.onOptionsItemSelected(item);
     }
 
     public void setCategory(Category category) {
