@@ -28,7 +28,7 @@ android {
             keyPassword "boohee"
         }
     }
-    
+
     buildTypes {
         debug {
             versionNameSuffix "-debug"
@@ -41,9 +41,9 @@ android {
             // signingConfig signingConfigs.release
         }
     }
-    
+
     lintOptions {
-      abortOnError false
+        abortOnError false
     }
 }
 
@@ -53,4 +53,5 @@ dependencies {
     compile rootProject.ext.dependencies["support-v4"]
     compile rootProject.ext.dependencies["foldable-layout"]
     compile rootProject.ext.dependencies["etsy-grid"]
+    compile rootProject.ext.dependencies["appcompat-v7"]
 }

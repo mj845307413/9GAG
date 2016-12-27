@@ -1,8 +1,11 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <include layout="@layout/custom_toolbar" />
 
         <uk.co.senab.photoview.PhotoView
             android:id="@+id/photoView"
@@ -23,6 +26,6 @@
             ProgressWheel:textColor="#222222"
             ProgressWheel:textSize="14sp" />
 
-    </FrameLayout>
+    </LinearLayout>
 
 </merge>

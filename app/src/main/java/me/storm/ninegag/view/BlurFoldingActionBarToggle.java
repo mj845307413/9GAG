@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.os.AsyncTask;
-import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.annotation.StringRes;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -31,12 +33,20 @@ public class BlurFoldingActionBarToggle extends ActionBarDrawerToggle {
     private int mBlurRadius;
     private int mDownSampling;
 
-    public BlurFoldingActionBarToggle(Activity activity, DrawerLayout drawerLayout, int drawerImageRes, int openDrawerContentDescRes, int closeDrawerContentDescRes) {
-        super(activity, drawerLayout, drawerImageRes, openDrawerContentDescRes, closeDrawerContentDescRes);
+
+    public BlurFoldingActionBarToggle(Activity activity, DrawerLayout drawerLayout, Toolbar toolbar, @StringRes int openDrawerContentDescRes, @StringRes int closeDrawerContentDescRes) {
+        super(activity, drawerLayout, toolbar, openDrawerContentDescRes, closeDrawerContentDescRes);
         this.mActivity = activity;
         mBlurRadius = DEFAULT_RADIUS;
         mDownSampling = DEFAULT_DOWN_SAMPLING;
     }
+
+//    public BlurFoldingActionBarToggle(Activity activity, DrawerLayout drawerLayout, int drawerImageRes, int openDrawerContentDescRes, int closeDrawerContentDescRes) {
+//        super(activity, drawerLayout, drawerImageRes, openDrawerContentDescRes, closeDrawerContentDescRes);
+//        this.mActivity = activity;
+//        mBlurRadius = DEFAULT_RADIUS;
+//        mDownSampling = DEFAULT_DOWN_SAMPLING;
+//    }
 
     public void onDrawerSlide(android.view.View drawerView, float slideOffset) {
         super.onDrawerSlide(drawerView, slideOffset);

@@ -7,6 +7,11 @@
         <item name="android:actionOverflowButtonStyle">@style/ActionbarOverFlowStyle</item>
     </style>
 
+    <style name="AppTheme.Base" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
     <style name="ActionbarStyle" parent="android:Widget.Holo.ActionBar">
         <item name="android:background">@color/main_bg</item>
         <item name="android:homeAsUpIndicator">@drawable/ic_back_holo_light</item>
@@ -28,7 +33,7 @@
         <item name="shadow_bottom">@drawable/shadow_bottom</item>
     </style>
 
-    <style name="TranslucentTheme" parent="@style/AppTheme">
+    <style name="TranslucentTheme" parent="@style/AppTheme.Base">
         <item name="android:windowIsTranslucent">true</item>
     </style>
 

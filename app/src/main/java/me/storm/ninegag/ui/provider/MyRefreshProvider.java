@@ -1,7 +1,6 @@
 package me.storm.ninegag.ui.provider;
 
 import android.content.Context;
-import android.view.ActionProvider;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -11,7 +10,7 @@ import me.storm.ninegag.R;
 /**
  * Created by majun on 16/12/21.
  */
-public class MyRefreshProvider extends ActionProvider {
+public class MyRefreshProvider extends android.support.v4.view.ActionProvider{
     /**
      * Creates a new instance. ActionProvider classes should always implement a
      * constructor that takes a single Context parameter for inflating from menu XML.

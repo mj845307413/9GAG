@@ -71,7 +71,6 @@ public class FeedsFragment extends BaseFragment implements LoaderManager.LoaderC
     private Category mCategory;
     private FeedsDataHelper mDataHelper;
     private FeedsAdapter mAdapter;
-    private MyRefreshProvider mMyRefreshProvider;
     private Animation mAnimation;
     private long mPage = 0;
 
@@ -137,14 +136,15 @@ public class FeedsFragment extends BaseFragment implements LoaderManager.LoaderC
     private void initActionBar() {
         mAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.refresh_rotate);
         mAnimation.setInterpolator(new LinearInterpolator());
-        View actionBarContainer = ActionBarUtils.findActionBarContainer(getActivity());
-        actionBarContainer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                ListViewUtils.smoothScrollListViewToTop(gridView);
-                gridView.smoothScrollToPositionFromTop(0, 0);
-            }
-        });
+        //点击返回第一个item
+//        View actionBarContainer = ActionBarUtils.findActionBarContainer(getActivity());
+//        actionBarContainer.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+////                ListViewUtils.smoothScrollListViewToTop(gridView);
+//                gridView.smoothScrollToPositionFromTop(0, 0);
+//            }
+//        });
     }
 
     //根据数据库保存的category类型,设定mCategory
@@ -258,13 +258,13 @@ public class FeedsFragment extends BaseFragment implements LoaderManager.LoaderC
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         mRefreshItem = menu.findItem(R.id.action_refresh);
-        mMyRefreshProvider = new MyRefreshProvider(getActivity(), new View.OnClickListener() {
+        MyRefreshProvider myRefreshProvider = new MyRefreshProvider(getActivity(), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 loadFirstAndScrollToTop();
             }
         });
-        mRefreshItem.setActionProvider(mMyRefreshProvider);
+        MenuItemCompat.setActionProvider(mRefreshItem, myRefreshProvider);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -273,9 +273,13 @@ public class FeedsFragment extends BaseFragment implements LoaderManager.LoaderC
         mSwipeLayout.setRefreshing(refreshing);
         if (mRefreshItem == null) return;
 
-        if (refreshing) {
-            mMyRefreshProvider.freshIcon.startAnimation(mAnimation);
-        } else
-            mMyRefreshProvider.freshIcon.clearAnimation();
+        MyRefreshProvider myRefreshProvider = (MyRefreshProvider) MenuItemCompat.getActionProvider(mRefreshItem);
+        if (myRefreshProvider.freshIcon != null) {
+            if (refreshing) {
+                myRefreshProvider.freshIcon.startAnimation(mAnimation);
+            } else {
+                myRefreshProvider.freshIcon.clearAnimation();
+            }
+        }
     }
 }

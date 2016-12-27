@@ -4,8 +4,10 @@ import android.app.ActionBar;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -20,7 +22,7 @@ import me.storm.ninegag.util.ToastUtils;
 /**
  * Created by storm on 14-3-24.
  */
-public abstract class BaseActivity extends FragmentActivity {
+public abstract class BaseActivity extends AppCompatActivity {
     protected ActionBar actionBar;
     private ShimmerTextView mActionBarTitle;
 
@@ -29,7 +31,7 @@ public abstract class BaseActivity extends FragmentActivity {
         initActionBar();
     }
 
-    private void initActionBar() {
+    public void initActionBar() {
         actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);

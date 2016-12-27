@@ -15,7 +15,7 @@
         <attr name="delayMillis" format="integer" />
         <attr name="circleColor" format="color" />
         <attr name="barWidth" format="dimension" />
-        <attr name="barLength" format="dimension" />
+        <attr name="wheelBarLength" format="dimension" />
     </declare-styleable>
 
     <declare-styleable name="SwipeBackLayout">

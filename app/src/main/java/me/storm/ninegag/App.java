@@ -11,6 +11,8 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.nostra13.universalimageloader.core.download.ImageDownloader;
 
+import me.storm.ninegag.util.CrashHandler;
+
 /**
  * Created by storm on 14-3-24.
  */
@@ -21,6 +23,8 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         sContext = getApplicationContext();
+        CrashHandler crashHandler = CrashHandler.getInstance();
+        crashHandler.init(sContext);
         initImageLoader(getApplicationContext());
     }
 
@@ -32,7 +36,7 @@ public class App extends Application {
     public static void initImageLoader(Context context) {
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context)//这里使用了建造者模式
                 .threadPriority(Thread.NORM_PRIORITY - 2)
-                .memoryCacheExtraOptions(480,800)
+                .memoryCacheExtraOptions(480, 800)
                 .denyCacheImageMultipleSizesInMemory()
                 .discCacheExtraOptions(480, 800, Bitmap.CompressFormat.JPEG, 25, null)
                 .memoryCache(new LruMemoryCache(20 * 1024 * 1024)).discCacheSize(50 * 1024 * 1024)

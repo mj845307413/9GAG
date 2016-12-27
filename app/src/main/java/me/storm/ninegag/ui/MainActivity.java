@@ -5,6 +5,8 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,6 +36,9 @@ public class MainActivity extends BaseActivity {
     @InjectView(R.id.blur_image)
     ImageView blurImage;
 
+    @InjectView(R.id.toolbar)
+    Toolbar toolbar;
+
     private BlurFoldingActionBarToggle mDrawerToggle;
 
     private FeedsFragment mContentFragment;
@@ -44,34 +49,50 @@ public class MainActivity extends BaseActivity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        ButterKnife.inject(this);
+        try {
+            setContentView(R.layout.activity_main);
 
-        actionBar.setIcon(R.drawable.ic_actionbar);
-        mDrawerLayout.setScrimColor(Color.argb(100, 255, 255, 255));
-        mDrawerToggle = new BlurFoldingActionBarToggle(this, mDrawerLayout, R.drawable.ic_drawer, R.string.drawer_open, R.string.drawer_close) {
-            @Override
-            public void onDrawerOpened(View view) {
-                super.onDrawerOpened(view);
-                setTitle(R.string.app_name);
-                mMenu.findItem(R.id.action_refresh).setVisible(false);
-            }
+            ButterKnife.inject(this);
+            toolbar.setLogo(R.drawable.ic_actionbar);
+            toolbar.setTitle("majun");
+            setSupportActionBar(toolbar);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeButtonEnabled(true);
+//        actionBar.setIcon(R.drawable.ic_actionbar);
+            mDrawerLayout.setScrimColor(Color.argb(100, 255, 255, 255));
+            //与toolbar上面的icon绑定
+            mDrawerToggle = new BlurFoldingActionBarToggle(this, mDrawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close) {
+                @Override
+                public void onDrawerOpened(View view) {
+                    super.onDrawerOpened(view);
+//                    setTitle(R.string.app_name);
+                    mMenu.findItem(R.id.action_refresh).setVisible(false);
+                }
 
-            @Override
-            public void onDrawerClosed(View view) {
-                super.onDrawerClosed(view);
-                setTitle(mCategory.getDisplayName());
-                mMenu.findItem(R.id.action_refresh).setVisible(true);
+                @Override
+                public void onDrawerClosed(View view) {
+                    super.onDrawerClosed(view);
+//                    setTitle(mCategory.getDisplayName());
+                    mMenu.findItem(R.id.action_refresh).setVisible(true);
 
-                blurImage.setVisibility(View.GONE);
-                blurImage.setImageBitmap(null);
-            }
-        };
-        mDrawerToggle.setBlurImageAndView(blurImage, contentLayout);
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
+                    blurImage.setVisibility(View.GONE);
+                    blurImage.setImageBitmap(null);
+                }
+            };
+            mDrawerToggle.setBlurImageAndView(blurImage, contentLayout);//设置实现毛玻璃效果
+            mDrawerLayout.setDrawerListener(mDrawerToggle);
 
-        setCategory(Category.hot);
-        replaceFragment(R.id.left_drawer, new DrawerFragment());
+            setCategory(Category.hot);
+            replaceFragment(R.id.left_drawer, new DrawerFragment());
+        } catch (Exception e) {
+            Log.e("majun", e.toString(), e);
+        }
+    }
+
+    //这里使用toolbar替代actionbar,所以将原来的actionbar的初始化覆盖掉
+    @Override
+    public void initActionBar() {
+
     }
 
     @Override
@@ -100,6 +121,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        //如何让app图标点击的时候能够展开或者隐藏侧边菜单
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
@@ -112,7 +134,7 @@ public class MainActivity extends BaseActivity {
             return;
         }
         mCategory = category;
-        setTitle(mCategory.getDisplayName());
+//        setTitle(mCategory.getDisplayName());
         mContentFragment = FeedsFragment.newInstance(category);
         replaceFragment(R.id.content_frame, mContentFragment);
     }

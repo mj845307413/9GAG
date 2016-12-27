@@ -2,6 +2,7 @@ package me.storm.ninegag.ui;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -23,7 +24,8 @@ import uk.co.senab.photoview.PhotoViewAttacher;
  */
 public class ImageViewActivity extends SwipeBackActivity {
     public static final String IMAGE_URL = "image_url";
-
+    @InjectView(R.id.toolbar)
+    Toolbar toolbar;
     @InjectView(R.id.photoView)
     PhotoView photoView;
 
@@ -36,8 +38,10 @@ public class ImageViewActivity extends SwipeBackActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_imageview);
         ButterKnife.inject(this);
-
-        setTitle(R.string.view_big_image);
+        setSupportActionBar(toolbar);
+        toolbar.setLogo(R.drawable.ic_actionbar);
+        toolbar.setTitle("majun");
+//        setTitle(R.string.view_big_image);
 
         mAttacher = new PhotoViewAttacher(photoView);
         mAttacher.setOnPhotoTapListener(new PhotoViewAttacher.OnPhotoTapListener() {
@@ -62,6 +66,11 @@ public class ImageViewActivity extends SwipeBackActivity {
                 progressWheel.setProgress(360 * current / total);
             }
         });
+    }
+
+    @Override
+    public void initActionBar() {
+
     }
 
     @Override
