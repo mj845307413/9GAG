@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -31,6 +32,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         initActionBar();
     }
 
+    //actionbar用toolbar替代后就不用了
     public void initActionBar() {
         actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);

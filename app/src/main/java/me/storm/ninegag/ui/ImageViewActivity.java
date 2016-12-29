@@ -9,6 +9,8 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageLoadingProgressListener;
 import com.nostra13.universalimageloader.core.assist.SimpleImageLoadingListener;
+import com.romainpiel.shimmer.Shimmer;
+import com.romainpiel.shimmer.ShimmerTextView;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -31,7 +33,8 @@ public class ImageViewActivity extends SwipeBackActivity {
 
     @InjectView(R.id.progressWheel)
     ProgressWheel progressWheel;
-
+    @InjectView(R.id.content_name)
+    ShimmerTextView contentName;
     private PhotoViewAttacher mAttacher;
 
     public void onCreate(Bundle savedInstanceState) {
@@ -40,8 +43,11 @@ public class ImageViewActivity extends SwipeBackActivity {
         ButterKnife.inject(this);
         setSupportActionBar(toolbar);
         toolbar.setLogo(R.drawable.ic_actionbar);
-        toolbar.setTitle("majun");
-//        setTitle(R.string.view_big_image);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        new Shimmer().start(contentName);
+        contentName.setText(R.string.view_big_image);
 
         mAttacher = new PhotoViewAttacher(photoView);
         mAttacher.setOnPhotoTapListener(new PhotoViewAttacher.OnPhotoTapListener() {

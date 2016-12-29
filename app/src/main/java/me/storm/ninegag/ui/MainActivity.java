@@ -12,6 +12,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.romainpiel.shimmer.Shimmer;
+import com.romainpiel.shimmer.ShimmerTextView;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -39,6 +43,9 @@ public class MainActivity extends BaseActivity {
     @InjectView(R.id.toolbar)
     Toolbar toolbar;
 
+    @InjectView(R.id.content_name)
+    ShimmerTextView contentName;
+
     private BlurFoldingActionBarToggle mDrawerToggle;
 
     private FeedsFragment mContentFragment;
@@ -51,28 +58,31 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         try {
             setContentView(R.layout.activity_main);
-
             ButterKnife.inject(this);
             toolbar.setLogo(R.drawable.ic_actionbar);
-            toolbar.setTitle("majun");
+//            toolbar.setTitle("majun");
             setSupportActionBar(toolbar);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeButtonEnabled(true);
-//        actionBar.setIcon(R.drawable.ic_actionbar);
-            mDrawerLayout.setScrimColor(Color.argb(100, 255, 255, 255));
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+            new Shimmer().start(contentName);
+            //设置用于该掩盖的主要内容，而抽屉打开网眼织物的颜色
+            mDrawerLayout.setScrimColor(Color.argb(100,255, 255, 255));
             //与toolbar上面的icon绑定
             mDrawerToggle = new BlurFoldingActionBarToggle(this, mDrawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close) {
+
                 @Override
+                //抽屉打开时
                 public void onDrawerOpened(View view) {
                     super.onDrawerOpened(view);
-//                    setTitle(R.string.app_name);
+                    contentName.setText(R.string.app_name);
                     mMenu.findItem(R.id.action_refresh).setVisible(false);
                 }
 
                 @Override
                 public void onDrawerClosed(View view) {
                     super.onDrawerClosed(view);
-//                    setTitle(mCategory.getDisplayName());
+                    contentName.setText(mCategory.getDisplayName());
                     mMenu.findItem(R.id.action_refresh).setVisible(true);
 
                     blurImage.setVisibility(View.GONE);
@@ -134,7 +144,7 @@ public class MainActivity extends BaseActivity {
             return;
         }
         mCategory = category;
-//        setTitle(mCategory.getDisplayName());
+        contentName.setText(mCategory.getDisplayName());
         mContentFragment = FeedsFragment.newInstance(category);
         replaceFragment(R.id.content_frame, mContentFragment);
     }

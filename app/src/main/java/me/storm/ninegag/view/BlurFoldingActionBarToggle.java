@@ -20,7 +20,7 @@ import me.storm.ninegag.util.Blur;
 /**
  * Created by storm on 14-4-19.
  * <p/>
- * 自定义的ActionBarDrawerToggle,同时实现折叠和毛玻璃效果
+ * 自定义的ActionBarDrawerToggle,搭配drawerlayout实现折叠和毛玻璃的效果
  */
 public class BlurFoldingActionBarToggle extends ActionBarDrawerToggle {
     private static final int DEFAULT_RADIUS = 10;
@@ -48,6 +48,7 @@ public class BlurFoldingActionBarToggle extends ActionBarDrawerToggle {
 //        mDownSampling = DEFAULT_DOWN_SAMPLING;
 //    }
 
+    //抽屉改变时使用
     public void onDrawerSlide(android.view.View drawerView, float slideOffset) {
         super.onDrawerSlide(drawerView, slideOffset);
         if (drawerView instanceof BaseFoldingLayout) {
@@ -61,6 +62,7 @@ public class BlurFoldingActionBarToggle extends ActionBarDrawerToggle {
         }
     }
 
+    //关闭抽屉
     @Override
     public void onDrawerClosed(View drawerView) {
         super.onDrawerClosed(drawerView);

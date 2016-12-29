@@ -34,6 +34,7 @@ public class FoldingDrawerLayout extends DrawerLayout {
         final int childCount = getChildCount();
         for (int i = 0; i < childCount; i++) {
             final View child = getChildAt(i);
+            //将原来的抽屉view替换成折叠的抽屉view
             if (isDrawerView2(child)) {
                 System.out.println("at" + i);
                 BaseFoldingLayout foldingNavigationLayout = new BaseFoldingLayout(
@@ -56,6 +57,7 @@ public class FoldingDrawerLayout extends DrawerLayout {
         return isFoldingLayout(getRealDrawer(drawerView)) ? (BaseFoldingLayout) getRealDrawer(drawerView) : null;
     }
 
+    //判断是不是折叠的抽屉view
     boolean isDrawerView2(View child) {
         final int gravity = ((LayoutParams) child.getLayoutParams()).gravity;
         final int absGravity = GravityCompat.getAbsoluteGravity(gravity,

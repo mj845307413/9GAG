@@ -5,6 +5,9 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import com.romainpiel.shimmer.Shimmer;
+import com.romainpiel.shimmer.ShimmerTextView;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import me.storm.ninegag.R;
@@ -17,6 +20,8 @@ import me.storm.ninegag.view.swipeback.SwipeBackActivity;
 public class PreferenceActivity extends SwipeBackActivity {
     @InjectView(R.id.toolbar)
     Toolbar toolbar;
+    @InjectView(R.id.content_name)
+    ShimmerTextView contentName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,8 +30,11 @@ public class PreferenceActivity extends SwipeBackActivity {
         ButterKnife.inject(this);
         setSupportActionBar(toolbar);
         toolbar.setLogo(R.drawable.ic_actionbar);
-        toolbar.setTitle("majun");
-//        setTitle(R.string.action_settings);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        new Shimmer().start(contentName);
+        contentName.setText(R.string.action_settings);
         getFragmentManager().beginTransaction().replace(R.id.content, new PreferenceFragment())
                 .commit();
     }

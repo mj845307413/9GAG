@@ -89,13 +89,15 @@ public class BaseFoldingLayout extends ViewGroup {
     private Rect[] mFoldRectArray;
 
     private Matrix[] mMatrix;
-
+    //折叠方向
     protected Orientation mOrientation = Orientation.HORIZONTAL;
 
     protected float mAnchorFactor = 0;
+    //折叠程度因子
     private float mFoldFactor = 0;
 
-    private int mNumberOfFolds = 2;
+    //折叠的块数
+    private int mNumberOfFolds = 8;
 
     private boolean mIsHorizontal = true;
 
@@ -141,6 +143,7 @@ public class BaseFoldingLayout extends ViewGroup {
 
     public void init(Context context, AttributeSet attrs) {
         // now style everything!
+        //复用layout文件中的自定义属性(这个其实很重要)
         TypedArray ta = context.obtainStyledAttributes(attrs,
                 R.styleable.FoldingMenu);
         int mFoldNumber = ta.getInt(R.styleable.FoldingMenu_foldNumber,
@@ -234,6 +237,7 @@ public class BaseFoldingLayout extends ViewGroup {
         }
     }
 
+    //用于改变抽屉的启示位置
     public void setAnchorFactor(float anchorFactor) {
         if (anchorFactor != mAnchorFactor) {
             mAnchorFactor = anchorFactor;
@@ -299,6 +303,7 @@ public class BaseFoldingLayout extends ViewGroup {
         mOrientation = orientation;
         mIsHorizontal = (orientation == Orientation.HORIZONTAL);
 
+        //设置折叠的阴影
         if (mIsHorizontal) {
             mShadowLinearGradient = new LinearGradient(0, 0, SHADING_FACTOR, 0,
                     Color.BLACK, Color.TRANSPARENT, TileMode.CLAMP);
@@ -307,7 +312,7 @@ public class BaseFoldingLayout extends ViewGroup {
                     Color.BLACK, Color.TRANSPARENT, TileMode.CLAMP);
         }
 
-        mGradientShadow.setStyle(Style.FILL);
+        mGradientShadow.setStyle(Style.FILL);//设置画笔风格实心或者空心
         mGradientShadow.setShader(mShadowLinearGradient);
         mShadowGradientMatrix = new Matrix();
 
@@ -333,6 +338,7 @@ public class BaseFoldingLayout extends ViewGroup {
             getChildAt(0).draw(canvas);
         }
 
+        //每个折叠小边的长度
         int delta = Math.round(mIsHorizontal ? ((float) w)
                 / ((float) mNumberOfFolds) : ((float) h)
                 / ((float) mNumberOfFolds));
@@ -589,6 +595,7 @@ public class BaseFoldingLayout extends ViewGroup {
 		/*
 		 * Draws the bitmaps and shadows on the canvas with the appropriate
 		 * transformations.
+		 * 绘制mNumberOfFolds次
 		 */
         for (int x = 0; x < mNumberOfFolds; x++) {
 
@@ -600,10 +607,12 @@ public class BaseFoldingLayout extends ViewGroup {
 			 * Concatenates the canvas with the transformation matrix for the
 			 * the segment of the view corresponding to the actual image being
 			 * displayed.
+			 * 将matrix应用到canvas
 			 */
             canvas.concat(mMatrix[x]);
             if (VersionUtils.IS_JBMR2) {
                 mDstRect.set(0, 0, src.width(), src.height());
+                //绘制图片
                 canvas.drawBitmap(mFullBitmap, src, mDstRect, null);
             } else {
 				/*
@@ -612,10 +621,12 @@ public class BaseFoldingLayout extends ViewGroup {
 				 * the size of each fold and is translated so they are drawn in
 				 * the right place. The shadow is then drawn on top of the
 				 * different folds using the sametransformation matrix.
+				 * 控制显示的大小
 				 */
                 canvas.clipRect(0, 0, src.right - src.left, src.bottom
                         - src.top);
 
+                //移动绘制阴影
                 if (mIsHorizontal) {
                     canvas.translate(-src.left, 0);
                 } else {
@@ -632,9 +643,11 @@ public class BaseFoldingLayout extends ViewGroup {
             }
 			/* Draws the shadows corresponding to this specific fold. */
             if (x % 2 == 0) {
+                //绘制黑色遮盖
                 canvas.drawRect(0, 0, mFoldDrawWidth, mFoldDrawHeight,
                         mSolidShadow);
             } else {
+                //绘制阴影
                 canvas.drawRect(0, 0, mFoldDrawWidth, mFoldDrawHeight,
                         mGradientShadow);
             }
