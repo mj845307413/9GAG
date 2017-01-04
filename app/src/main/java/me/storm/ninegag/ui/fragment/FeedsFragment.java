@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.util.Log;
@@ -18,7 +17,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
 import android.widget.AdapterView;
@@ -27,8 +25,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.nhaarman.listviewanimations.swinginadapters.AnimationAdapter;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +35,7 @@ import butterknife.InjectView;
 import me.storm.ninegag.App;
 import me.storm.ninegag.R;
 import me.storm.ninegag.api.GagApi;
-import me.storm.ninegag.dao.FeedsDataHelper;
+import me.storm.ninegag.dao.GreenDaoHelper;
 import me.storm.ninegag.data.GsonRequest;
 import me.storm.ninegag.model.Category;
 import me.storm.ninegag.model.Feed;
@@ -47,7 +43,6 @@ import me.storm.ninegag.ui.ImageViewActivity;
 import me.storm.ninegag.ui.adapter.CardsAnimationAdapter;
 import me.storm.ninegag.ui.adapter.FeedsAdapter;
 import me.storm.ninegag.ui.provider.MyRefreshProvider;
-import me.storm.ninegag.util.ActionBarUtils;
 import me.storm.ninegag.util.TaskUtils;
 import me.storm.ninegag.util.ToastUtils;
 import me.storm.ninegag.view.LoadingFooter;
@@ -69,7 +64,8 @@ public class FeedsFragment extends BaseFragment implements LoaderManager.LoaderC
     private MenuItem mRefreshItem;
 
     private Category mCategory;
-    private FeedsDataHelper mDataHelper;
+    //    private FeedsDataHelper mDataHelper;
+    private GreenDaoHelper mGreenDaoHelper;
     private FeedsAdapter mAdapter;
     private Animation mAnimation;
     private long mPage = 0;
@@ -95,7 +91,8 @@ public class FeedsFragment extends BaseFragment implements LoaderManager.LoaderC
         ButterKnife.inject(this, contentView);
 
         parseArgument();
-        mDataHelper = new FeedsDataHelper(App.getContext(), mCategory);
+        mGreenDaoHelper = new GreenDaoHelper(getContext(), mCategory);
+//        mDataHelper = new FeedsDataHelper(App.getContext(), mCategory);
         mAdapter = new FeedsAdapter(getActivity(), gridView);
         View header = new View(getActivity());
         gridView.addHeaderView(header);
@@ -157,7 +154,7 @@ public class FeedsFragment extends BaseFragment implements LoaderManager.LoaderC
         if (!mSwipeLayout.isRefreshing() && (next == 0)) {
             setRefreshing(true);
         }
-        String name = null;
+        String name;
         String url = null;
         try {
             name = URLEncoder.encode(mCategory.getDisplayName(), "utf-8");
@@ -178,7 +175,8 @@ public class FeedsFragment extends BaseFragment implements LoaderManager.LoaderC
                     @Override
                     protected Object doInBackground(Object... params) {
                         if (isRefreshFromTop) {
-                            mDataHelper.deleteAll();
+                            mGreenDaoHelper.deleteAll();
+//                            mDataHelper.deleteAll();
                         }
                         mPage = response.getPage() + 1;
                         List<Feed> feeds = new ArrayList<>();
@@ -187,7 +185,8 @@ public class FeedsFragment extends BaseFragment implements LoaderManager.LoaderC
                                 feeds.add(feed);
                             }
                         }
-                        mDataHelper.bulkInsert(feeds);
+                        mGreenDaoHelper.bulkInsert(feeds);
+//                        mDataHelper.bulkInsert(feeds);
                         return null;
                     }
 
@@ -233,12 +232,13 @@ public class FeedsFragment extends BaseFragment implements LoaderManager.LoaderC
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return mDataHelper.getCursorLoader();
+        return mGreenDaoHelper.getCursorLoader();
     }
 
+    //// TODO: 17/1/4 对loadermanager进行刷新 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        mAdapter.changeCursor(data);
+        mAdapter.changeCursor(data);//将swapCursor分装
         if (data != null && data.getCount() == 0) {
             loadFirst();
         }

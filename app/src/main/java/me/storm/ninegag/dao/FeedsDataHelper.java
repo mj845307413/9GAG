@@ -89,7 +89,7 @@ public class FeedsDataHelper extends BaseDataHelper {
 
         public static final String TABLE_NAME = "feeds";
 
-        public static final String ID = "id";
+        public static final String ID = "id";//这是图片的id,不是主键
 
         public static final String CATEGORY = "category";
 

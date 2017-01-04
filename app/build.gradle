@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-
+apply plugin: 'org.greenrobot.greendao'
 android {
     compileSdkVersion rootProject.ext.android.compileSdkVersion
     buildToolsVersion rootProject.ext.android.buildToolsVersion
@@ -47,11 +47,18 @@ android {
     }
 }
 
+greendao {
+    schemaVersion 1
+    daoPackage 'me.storm.ninegag.gen'
+    targetGenDir 'src/main/java'
+}
+
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
+    compile fileTree(include: ['*.jar', '*.aar'], dir: 'libs')
     compile project(':extras:ShimmerAndroid')
     compile rootProject.ext.dependencies["support-v4"]
     compile rootProject.ext.dependencies["foldable-layout"]
     compile rootProject.ext.dependencies["etsy-grid"]
     compile rootProject.ext.dependencies["appcompat-v7"]
+    compile rootProject.ext.dependencies["greendao"]
 }

@@ -14,13 +14,15 @@ public class DBHelper extends SQLiteOpenHelper {
     // 数据库版本
     private static final int VERSION = 1;
 
+    //创建数据库
     public DBHelper(Context context) {
         super(context, DB_NAME, null, VERSION);
     }
 
+    //创建表格,这边使用的是自定义了一个工具类
     @Override
     public void onCreate(SQLiteDatabase db) {
-        FeedsDataHelper.FeedsDBInfo.TABLE.create(db);
+//        FeedsDataHelper.FeedsDBInfo.TABLE.create(db);
     }
 
     @Override

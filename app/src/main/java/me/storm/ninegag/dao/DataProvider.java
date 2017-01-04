@@ -12,9 +12,12 @@ import android.net.Uri;
 import android.util.Log;
 
 import me.storm.ninegag.App;
+import me.storm.ninegag.gen.DataDao;
+import me.storm.ninegag.gen.GreenDaoManager;
 
 /**
  * Created by storm on 14-4-8.
+ * 别的应用调用时,需要使用contentprovider,在这个应用里其实不怎么需要
  */
 public class DataProvider extends ContentProvider {
     static final String TAG = DataProvider.class.getSimpleName();
@@ -26,8 +29,9 @@ public class DataProvider extends ContentProvider {
     public static final String SCHEME = "content://";
 
     // messages
-    public static final String PATH_FEEDS = "/feeds";
+    public static final String PATH_FEEDS = "/DATA";
 
+    //contentprovider的表的url
     public static final Uri FEEDS_CONTENT_URI = Uri.parse(SCHEME + AUTHORITY + PATH_FEEDS);
 
     private static final int FEEDS = 0;
@@ -35,13 +39,13 @@ public class DataProvider extends ContentProvider {
     /*
      * MIME type definitions
      */
-    public static final String FEED_CONTENT_TYPE = "vnd.android.cursor.dir/vnd.storm.9gag.feed";
+    public static final String FEED_CONTENT_TYPE = "vnd.android.cursor.dir/vnd.storm.9gag.feed";//确定调用的type
 
     private static final UriMatcher sUriMatcher;
 
     static {
         sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        sUriMatcher.addURI(AUTHORITY, "feeds", FEEDS);
+        sUriMatcher.addURI(AUTHORITY, "DATA", FEEDS);
     }
 
     private static DBHelper mDBHelper;
@@ -61,11 +65,14 @@ public class DataProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         synchronized (DBLock) {
+
+
             SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
             String table = matchTable(uri);
             queryBuilder.setTables(table);
 
-            SQLiteDatabase db = getDBHelper().getReadableDatabase();
+            SQLiteDatabase db = GreenDaoManager.getInstance().getWritableDatabase();
+            GreenDaoManager.getInstance().getmDaoSession().getDatabase();
             Cursor cursor = queryBuilder.query(db, // The database to
                     // queryFromDB
                     projection, // The columns to return from the queryFromDB
@@ -95,7 +102,7 @@ public class DataProvider extends ContentProvider {
     public Uri insert(Uri uri, ContentValues values) {
         synchronized (DBLock) {
             String table = matchTable(uri);
-            SQLiteDatabase db = getDBHelper().getWritableDatabase();
+            SQLiteDatabase db = GreenDaoManager.getInstance().getWritableDatabase();
             long rowId = 0;
             db.beginTransaction();
             try {
@@ -118,8 +125,7 @@ public class DataProvider extends ContentProvider {
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
         synchronized (DBLock) {
-            SQLiteDatabase db = getDBHelper().getWritableDatabase();
-
+            SQLiteDatabase db = GreenDaoManager.getInstance().getWritableDatabase();
             int count = 0;
             String table = matchTable(uri);
             db.beginTransaction();
@@ -137,7 +143,7 @@ public class DataProvider extends ContentProvider {
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         synchronized (DBLock) {
-            SQLiteDatabase db = getDBHelper().getWritableDatabase();
+            SQLiteDatabase db = GreenDaoManager.getInstance().getWritableDatabase();
             int count;
             String table = matchTable(uri);
             db.beginTransaction();
@@ -157,7 +163,7 @@ public class DataProvider extends ContentProvider {
         String table = null;
         switch (sUriMatcher.match(uri)) {
             case FEEDS:
-                table = FeedsDataHelper.FeedsDBInfo.TABLE_NAME;
+                table = DataDao.TABLENAME;
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);

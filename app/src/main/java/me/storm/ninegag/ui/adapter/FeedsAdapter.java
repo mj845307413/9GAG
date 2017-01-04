@@ -24,7 +24,9 @@ import java.net.URLDecoder;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import me.storm.ninegag.R;
+import me.storm.ninegag.dao.FeedsDataHelper;
 import me.storm.ninegag.data.ImageCacheManager;
+import me.storm.ninegag.gen.DataDao;
 import me.storm.ninegag.model.Feed;
 import me.storm.ninegag.util.DensityUtils;
 

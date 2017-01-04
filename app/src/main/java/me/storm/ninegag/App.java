@@ -11,6 +11,7 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.nostra13.universalimageloader.core.download.ImageDownloader;
 
+import me.storm.ninegag.gen.GreenDaoManager;
 import me.storm.ninegag.util.CrashHandler;
 
 /**
@@ -23,8 +24,10 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         sContext = getApplicationContext();
+        //获取全局异常信息
         CrashHandler crashHandler = CrashHandler.getInstance();
         crashHandler.init(sContext);
+        GreenDaoManager.getInstance();
         initImageLoader(getApplicationContext());
     }
 

@@ -44,6 +44,7 @@ public class SQLiteTable {
         return this;
     }
 
+    //用于创建datatable
     public void create(SQLiteDatabase db) {
         String formatter = " %s";
         StringBuilder stringBuilder = new StringBuilder();
