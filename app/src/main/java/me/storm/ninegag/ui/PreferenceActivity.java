@@ -29,7 +29,7 @@ public class PreferenceActivity extends SwipeBackActivity {
         setContentView(R.layout.activity_preference);
         ButterKnife.inject(this);
         setSupportActionBar(toolbar);
-        toolbar.setLogo(R.drawable.ic_actionbar);
+//        toolbar.setLogo(R.drawable.ic_actionbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);

@@ -59,7 +59,7 @@ public class MainActivity extends BaseActivity {
         try {
             setContentView(R.layout.activity_main);
             ButterKnife.inject(this);
-            toolbar.setLogo(R.drawable.ic_actionbar);
+//            toolbar.setLogo(R.drawable.ic_actionbar);
 //            toolbar.setTitle("majun");
             setSupportActionBar(toolbar);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -67,7 +67,7 @@ public class MainActivity extends BaseActivity {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             new Shimmer().start(contentName);
             //设置用于该掩盖的主要内容，而抽屉打开网眼织物的颜色
-            mDrawerLayout.setScrimColor(Color.argb(100,255, 255, 255));
+            mDrawerLayout.setScrimColor(Color.argb(100, 255, 255, 255));
             //与toolbar上面的icon绑定
             mDrawerToggle = new BlurFoldingActionBarToggle(this, mDrawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close) {
 

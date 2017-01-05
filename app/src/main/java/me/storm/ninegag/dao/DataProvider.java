@@ -130,7 +130,7 @@ public class DataProvider extends ContentProvider {
             String table = matchTable(uri);
             db.beginTransaction();
             try {
-                count = db.delete(table, selection, selectionArgs);
+                count = db.delete(table, selection+"=?", selectionArgs);
                 db.setTransactionSuccessful();
             } finally {
                 db.endTransaction();

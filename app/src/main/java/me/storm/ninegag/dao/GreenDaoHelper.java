@@ -1,7 +1,9 @@
 package me.storm.ninegag.dao;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.CursorLoader;
 
 import org.greenrobot.greendao.query.CursorQuery;
@@ -29,6 +31,14 @@ public class GreenDaoHelper {
         mContext = context;
     }
 
+    private ContentValues getContentValues(Feed feed) {
+        ContentValues values = new ContentValues();
+        values.put(DataDao.Properties.ImageID.columnName, feed.id);
+        values.put(DataDao.Properties.Category.columnName, mCategory.ordinal());
+        values.put(DataDao.Properties.Json.columnName, feed.toJson());
+        return values;
+    }
+
     public Feed query(long imageID) {
         Feed feed = null;
         DaoSession session = GreenDaoManager.getInstance().getmDaoSession();
@@ -45,28 +55,39 @@ public class GreenDaoHelper {
         return feed;
     }
 
+    //与contentprovider配合使用不方便用greendao的方法
     public void bulkInsert(List<Feed> feedList) {
-        synchronized (DataProvider.DBLock) {
-            DaoSession session = GreenDaoManager.getInstance().getmDaoSession();
-            DataDao dataDao = session.getDataDao();
-            List<Data> datas = new ArrayList<>();
-            for (Feed feed : feedList) {
-                Data data = new Data();
-                data.setImageID(feed.id);
-                data.setCategory(mCategory.ordinal());
-                data.setJson(feed.toJson());
-                datas.add(data);
-            }
-            dataDao.insertInTx(datas);
-
+        ArrayList<ContentValues> contentValues = new ArrayList<ContentValues>();
+        for (Feed feed : feedList) {
+            ContentValues values = getContentValues(feed);
+            contentValues.add(values);
         }
+        ContentValues[] valueArray = new ContentValues[contentValues.size()];
+        mContext.getContentResolver().bulkInsert(DataProvider.FEEDS_CONTENT_URI, contentValues.toArray(valueArray));
+//
+//
+//        synchronized (DataProvider.DBLock) {
+//            DaoSession session = GreenDaoManager.getInstance().getmDaoSession();
+//            DataDao dataDao = session.getDataDao();
+//            List<Data> datas = new ArrayList<>();
+//            for (Feed feed : feedList) {
+//                Data data = new Data();
+//                data.setImageID(feed.id);
+//                data.setCategory(mCategory.ordinal());
+//                data.setJson(feed.toJson());
+//                datas.add(data);
+//            }
+//            dataDao.insertInTx(datas);
+//        }
     }
 
     public void deleteAll() {
         synchronized (DataProvider.DBLock) {
-            DaoSession session = GreenDaoManager.getInstance().getmDaoSession();
-            DataDao dataDao = session.getDataDao();
-            dataDao.deleteAll();
+            mContext.getContentResolver().delete(DataProvider.FEEDS_CONTENT_URI,DataDao.Properties.Category.columnName,new String[]{String.valueOf(mCategory.ordinal())});
+//            DaoSession session = GreenDaoManager.getInstance().getmDaoSession();
+//            DataDao dataDao = session.getDataDao();
+//            QueryBuilder queryBuilder=dataDao.queryBuilder();
+//            queryBuilder.where(DataDao.Properties.Category.eq(mCategory.ordinal())).buildDelete();
         }
     }
 
@@ -75,7 +96,7 @@ public class GreenDaoHelper {
         CursorLoader cursorLoader = new CursorLoader(mContext, DataProvider.FEEDS_CONTENT_URI, null, "CATEGORY=?",
                 new String[]{
                         String.valueOf(mCategory.ordinal())
-                }, DataDao.Properties.ImageID.columnName);
+                }, null);
         return cursorLoader;
     }
 }

@@ -79,8 +79,9 @@ public class FeedsAdapter extends CursorAdapter {
 
         Feed feed = Feed.fromCursor(cursor);
         mDefaultImageDrawable = new ColorDrawable(mResource.getColor(COLORS[cursor.getPosition() % COLORS.length]));
-        holder.imageRequest = ImageCacheManager.loadImage(feed.image_url, ImageCacheManager
-                .getImageListener(holder.image, mDefaultImageDrawable, mDefaultImageDrawable), 0, DensityUtils.dip2px(context, IMAGE_MAX_HEIGHT));
+        ImageLoader.ImageListener imageListener = ImageCacheManager.getImageListener(holder.image, mDefaultImageDrawable, mDefaultImageDrawable);
+        holder.imageRequest = ImageCacheManager.loadImage(feed.image_url, imageListener,0,DensityUtils.dip2px(context,IMAGE_MAX_HEIGHT));//调节显示的图片的像素
+
         try {
             String s = URLDecoder.decode(feed.abs, "utf-8");
             holder.caption.setText(s);

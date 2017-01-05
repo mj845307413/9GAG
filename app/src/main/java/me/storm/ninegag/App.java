@@ -35,7 +35,7 @@ public class App extends Application {
         return sContext;
     }
 
-    // 初始化ImageLoader
+    // 初始化ImageLoader,在项目中在单幅显示图片的时候使用了Universal-Image-Load框架,列表加载图片时使用的是volley框架中的imageloader
     public static void initImageLoader(Context context) {
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context)//这里使用了建造者模式
                 .threadPriority(Thread.NORM_PRIORITY - 2)

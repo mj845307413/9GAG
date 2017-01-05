@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
@@ -103,6 +104,7 @@ public class FeedsFragment extends BaseFragment implements LoaderManager.LoaderC
         gridView.setLoadNextListener(new OnLoadNextListener() {
             @Override
             public void onLoadNext() {
+                Log.i("majun", "loadNext");
                 loadNext();
             }
         });
@@ -193,6 +195,7 @@ public class FeedsFragment extends BaseFragment implements LoaderManager.LoaderC
                     @Override
                     protected void onPostExecute(Object o) {
                         super.onPostExecute(o);
+                        //// TODO: 17/1/5 这边可以加一个判断,判断是否是加载的最后一项.
                         if (isRefreshFromTop) {
                             setRefreshing(false);
                         } else {
@@ -235,11 +238,11 @@ public class FeedsFragment extends BaseFragment implements LoaderManager.LoaderC
         return mGreenDaoHelper.getCursorLoader();
     }
 
-    //// TODO: 17/1/4 对loadermanager进行刷新 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mAdapter.changeCursor(data);//将swapCursor分装
         if (data != null && data.getCount() == 0) {
+            Log.i("majun", "loadfirst");
             loadFirst();
         }
     }
