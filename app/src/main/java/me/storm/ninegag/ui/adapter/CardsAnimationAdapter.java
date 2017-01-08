@@ -15,6 +15,7 @@ import me.storm.ninegag.App;
 /**
  * Created by storm on 14-4-15.
  */
+//继承AnimationAdapter可以轻易的是list等具有动画.
 public class CardsAnimationAdapter extends AnimationAdapter {
     private float mTranslationY = 400;
 

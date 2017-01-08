@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -84,6 +85,9 @@ public class FeedsFragment extends BaseFragment implements LoaderManager.LoaderC
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        parseArgument();
+        mGreenDaoHelper = new GreenDaoHelper(getContext(), mCategory);
+        getLoaderManager().initLoader(0, null, this);
     }
 
     @Override
@@ -91,8 +95,6 @@ public class FeedsFragment extends BaseFragment implements LoaderManager.LoaderC
         View contentView = inflater.inflate(R.layout.fragment_feed, container, false);
         ButterKnife.inject(this, contentView);
 
-        parseArgument();
-        mGreenDaoHelper = new GreenDaoHelper(getContext(), mCategory);
 //        mDataHelper = new FeedsDataHelper(App.getContext(), mCategory);
         mAdapter = new FeedsAdapter(getActivity(), gridView);
         View header = new View(getActivity());
@@ -127,10 +129,10 @@ public class FeedsFragment extends BaseFragment implements LoaderManager.LoaderC
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
 
-        getLoaderManager().initLoader(0, null, this);
-        loadFirst();
+            loadFirst();
         return contentView;
     }
+
 
     private void initActionBar() {
         mAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.refresh_rotate);
@@ -145,6 +147,7 @@ public class FeedsFragment extends BaseFragment implements LoaderManager.LoaderC
 //            }
 //        });
     }
+
 
     //根据数据库保存的category类型,设定mCategory
     private void parseArgument() {
@@ -229,7 +232,7 @@ public class FeedsFragment extends BaseFragment implements LoaderManager.LoaderC
     }
 
     public void loadFirstAndScrollToTop() {
-        // TODO: gridView scroll to top
+        gridView.resetToTop();
         loadFirst();
     }
 
@@ -241,7 +244,7 @@ public class FeedsFragment extends BaseFragment implements LoaderManager.LoaderC
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mAdapter.changeCursor(data);//将swapCursor分装
-        if (data != null && data.getCount() == 0) {
+        if (data == null && data.getCount() == 0) {
             Log.i("majun", "loadfirst");
             loadFirst();
         }

@@ -21,4 +21,9 @@
     <string name="donate_url">https://m.alipay.com/personal/payment.htm?reason=请我喝杯咖啡吧T_T&amp;amount=3&amp;account=zhangqi.dev@qq.com</string>
 
     <string name="menu_refresh">刷新</string>
+    <string-array name="cities">
+        <item>成都</item>
+        <item>重庆</item>
+        <item>黄冈</item>
+    </string-array>
 </resources>
